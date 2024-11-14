@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+         # - id: ebook-service
+         #   uri: http://localhost:8081
+         #   predicates:
+         #     - Path=/books/**, /authors/**
+         #   filters:
+         #     - PrefixPath=/api/v1 # it adds this one before sending the api. so we need to send like http://localhost:8080/books/all
+          - id: ebook-service
+            uri: http://localhost:8081
+            predicates:
+              - Path=/ebook/api/v1/books/**, /ebook/api/v1/authors/**
+            filters:
+              - StripPrefix=1 # it deletes first part from the request. we need to send like http://localhost:8080/ebook/api/v1/books/all this. it deletes /book
+          - id: user-service
+            uri: http://localhost:8089
+            predicates:
+              - Path=/user/api/v1/users/**, /user/api/v1/addresses/**
+            filters:
+              - StripPrefix=1
+## my original url: http://localhost:8081/api/v1/books/all
+## if I want to use prefixpath I have to send request like http://localhost:8080/books/all -> it adds /api/v1 between uri and beginning of the predicates
+##if I want to use stripprefix I have to send a request like http://localhost:8080/ebook/api/v1/books/all -> it deletes how many parts we defined. for my above example it will delete ebook part.
